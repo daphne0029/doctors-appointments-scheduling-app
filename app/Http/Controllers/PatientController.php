@@ -28,7 +28,11 @@ class PatientController extends Controller
             ], 422);
         }
 
-        $patient = Patient::create($request->only(['name', 'email']));
+        $patient = Patient::create([
+            'name'  => $request->name,
+            'email' => $request->email,
+            'token' => substr(md5(openssl_random_pseudo_bytes(20)), 20),
+        ]);
 
         return response()->json([
             'message' => 'Patient created successfully',
