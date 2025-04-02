@@ -28,9 +28,12 @@ class PatientController extends Controller
             ], 422);
         }
 
-        $patient = Patient::create($validatedData);
+        $patient = Patient::create($request->only(['name', 'email']));
 
-        return response()->json($patient, 201);
+        return response()->json([
+            'message' => 'Patient created successfully',
+            'patient' => $patient,
+        ], 201);
     }
 
     /**
