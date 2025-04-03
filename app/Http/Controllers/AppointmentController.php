@@ -59,14 +59,13 @@ class AppointmentController extends Controller
         // Define working hours (assuming all doctors have the same hours)
         $workStart = '09:00';
         $workEnd = '17:00';
-        $interval = 10; // minutes
+        $appointmentsConfig = config('appointments');
+        $interval = (int) $appointmentsConfig['appointment_interval']; // minutes
 
         // Get booked appointments within the week
         $bookedAppointments = Appointment::whereBetween('start_time', [$weekDates->first(), $weekDates->last()])
             ->get()
             ->groupBy(fn($appt) => Carbon::parse($appt->start_time)->toDateString());
-        
-        // var_dump($bookedAppointments);
 
         $availableAppointments = [];
 
@@ -106,8 +105,9 @@ class AppointmentController extends Controller
                     if (!$isOverlapping) {
                         $availableTimes[] = $slotStart->format('H:i');
                     }
-    
-                    $start->addMinutes($interval); // Move to next 10-minute slot
+
+                    // Move to next 10-minute slot
+                    $start->addMinutes($interval); 
                 }
 
                 if (!empty($availableTimes)) {
