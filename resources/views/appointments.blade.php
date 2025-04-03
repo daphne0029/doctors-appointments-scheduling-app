@@ -39,8 +39,57 @@
           background-color: #28a745;
           color: white;
       }
-    </style>
 
+      .block{
+        display: inline-block;
+        vertical-align:top;
+      }
+
+      .appointment-block {
+        margin-left: 20px;
+        width: 50%;
+      }
+
+      .cancel-button {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .time-slot-button {
+        background-color:rgb(52, 127, 165);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .submit-slot-button {
+        background-color:rgb(52, 165, 76);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .disabled-btn {
+        background-color: gray;
+      }
+
+      .card {
+        border: 1px solid #ddd; 
+        border-radius: 8px; 
+        padding: 16px; 
+        margin-bottom: 12px; 
+        background-color: #f9f9f9; 
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+      }
+    </style>
 
 </head>
 <body>
@@ -49,31 +98,39 @@
 
     <div id="greeting" style="display: none; font-size: 20px; margin-bottom: 20px;"></div>
 
-    <h3>Your Upcoming Appointments:</h3>
-    <div id="appointments-list">
-        <p>Loading...</p>
-    </div>
+    <div>
+      <div class="block">
+        <h3>Your Upcoming Appointments:</h3>
+        <div id="appointments-list">
+            <p>Loading...</p>
+        </div>
+      </div>
 
-    <label for="appointmentType">Appointment Type:</label>
-    <select id="appointmentType" onchange="updateAvailableTimes()">
-        <option value="new_patient">New Patient Consultation</option>
-        <option value="consultation">Regular Consultation</option>
-        <option value="follow_up">Follow-up Consultation</option>
-    </select>
+      <div class="block appointment-block">
+        <h3>Book Your Next Appointment:</h3>
+        <label for="appointmentType">Appointment Type:</label>
+        <select id="appointmentType" onchange="updateAvailableTimes()">
+            <option value="new_patient">New Patient Consultation</option>
+            <option value="consultation">Regular Consultation</option>
+            <option value="follow_up">Follow-up Consultation</option>
+        </select>
 
-    <!-- Dropdown for selecting a date (will be populated dynamically) -->
-    <label for="appointmentDate">Select Date:</label>
-    <select id="appointmentDate" onchange="updateAvailableTimes()">
-        <option value="" disabled selected>Select a date</option>
-    </select>
+        <!-- Dropdown for selecting a date (will be populated dynamically) -->
+        <label for="appointmentDate">Select Date:</label>
+        <select id="appointmentDate" onchange="updateAvailableTimes()">
+            <option value="" disabled selected>Select a date</option>
+        </select>
 
-    <input type="hidden" id="appointmentTime" name="appointmentTime" value="">
-    <input type="hidden" id="appointmentDoctor" name="appointmentDoctor" value="">
-    <div id="appointmentSlots">
-      <!-- Time slots will be dynamically displayed here -->
-    </div>
+        <input type="hidden" id="appointmentTime" name="appointmentTime" value="">
+        <input type="hidden" id="appointmentDoctor" name="appointmentDoctor" value="">
+        <div id="appointmentSlots">
+          <!-- Time slots will be dynamically displayed here -->
+        </div>
 
-    <button style="margin-top: 20px; display: none;" id="addAppointmentBtn" onclick="addAppointment()">Submit</button>
+        <button class="submit-slot-button" style="margin-top: 20px; display: none;" 
+          id="addAppointmentBtn" onclick="addAppointment()">Submit</button>
+      </div>
+    <div>
 
     <hr>
     <hr>

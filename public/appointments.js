@@ -35,17 +35,10 @@ document.addEventListener('DOMContentLoaded', function() {
         data.appointments.forEach(appoint => {
             const appointmentItem = document.createElement("div");
             appointmentItem.innerHTML = `
-                <div style="
-                    border: 1px solid #ddd; 
-                    border-radius: 8px; 
-                    padding: 16px; 
-                    margin-bottom: 12px; 
-                    background-color: #f9f9f9; 
-                    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-                ">
-                    <p style="margin: 0 0 8px;">Appointment: <strong>${appoint.appointment_type}</strong> with Doctor ${appoint.doctor_name}</p>
+                <div class="card">
+                    <p style="margin: 0 0 8px;">Appointment: <strong>${appoint.appointment_type}</strong> with Dr. ${appoint.doctor_name}</p>
                     <p style="margin: 0 0 8px;">Date: ${new Date(appoint.start_time).toLocaleString()}</p>
-                    <button style="background-color: #ff4d4d; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer;" 
+                    <button class="cancel-button" 
                         onclick="deleteAppointment(${appoint.id})">Cancel</button>
                 </div>
             `;
@@ -197,19 +190,21 @@ function renderTimeSlots() {
             // render time slots
             const dateDiv = document.createElement("div");
             dateDiv.classList.add("slot-date", type);
+            dateDiv.classList.add("card");
             dateDiv.setAttribute('data-date', entry.date);
             dateDiv.style.display = "none";
             typeDiv.appendChild(dateDiv);
 
             // render doctor name
-            const doctorSpan = document.createElement('span');
-            doctorSpan.textContent = entry.doctor;
-            doctorSpan.setAttribute('data-id', entry.doctor_id);
-            dateDiv.appendChild(doctorSpan);
+            const doctorP = document.createElement('p');
+            doctorP.textContent = 'Dr. ' + entry.doctor;
+            doctorP.setAttribute('data-id', entry.doctor_id);
+            dateDiv.appendChild(doctorP);
 
             entry.available_start_time.forEach(time => {
                 const button = document.createElement("button");
                 button.classList.add("appointment-times");
+                button.classList.add("time-slot-button");
                 button.textContent = time;
                 button.setAttribute('data-time', time);
                 button.classList.add("time-slot", type);
@@ -232,18 +227,29 @@ function updateAvailableTimes() {
     const selectedType = $("#appointmentType").val();
     const selectedDate = $("#appointmentDate").val();
 
+
     $(`div.slot-date`).css("display", "none");
     $("div.appointment-times-group").css("display", "none");
+    $(`button.appointment-times.time-slot`).css('background', '');
+    $(`button.appointment-times.time-slot`).css('color', 'white');
+    $('#appointmentTime').val('');
+    $('#appointmentDoctor').val('');
 
     $(`div.appointment-times-group.${selectedType}`).css("display", "block");
     $(`div.slot-date.${selectedType}[data-date="${selectedDate}"]`).css("display", "block");
 
-    $('#addAppointmentBtn').css("display", "block");
+    if (selectedDate) {
+        $('#addAppointmentBtn').css("display", "block");
+    }
 }
 
 function selectTime(date, time, type, doctor_id) {
+    // reset
     $(`button.appointment-times.time-slot`).css('background', '');
-    $(`button.appointment-times.time-slot.${type}[data-time="${time}"]`).css('background', 'blanchedalmond');
+    $(`button.appointment-times.time-slot`).css('color', 'white');
+
+    $(`button.appointment-times.time-slot.${type}[data-time="${time}"]`).css('background', 'rgb(221 203 133)');
+    $(`button.appointment-times.time-slot.${type}[data-time="${time}"]`).css('color', 'black');
 
     $('#appointmentTime').val(time);
     $('#appointmentDoctor').val(doctor_id);
