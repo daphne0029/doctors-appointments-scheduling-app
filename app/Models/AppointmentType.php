@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class AppointmentType extends Model
+class AppointmentType
 {
     /**
      * Retrieve all doctors from the config.
@@ -23,6 +23,15 @@ class AppointmentType extends Model
     public static function find(int $id): array|null
     {
         $types = config('appointment_type');
+
         return $types[$id] ?? null;
+    }
+
+    // Helper function to get appointment duration
+    public static function getAppointmentDuration($type)
+    {
+        $appointmentTypes = config('appointment_type');
+
+        return $appointmentTypes[$type]['duration_in_mins'] ?? 30;
     }
 }

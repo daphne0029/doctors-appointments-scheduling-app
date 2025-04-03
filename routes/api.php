@@ -20,6 +20,7 @@ Route::post('/patients', [PatientController::class, 'store']);
 Route::get('/patients/{id}', [PatientController::class, 'show']);
 
 Route::get('/appointments', [AppointmentController::class, 'index']);
+Route::get('/available-appointments', [AppointmentController::class, 'availableAppointments']);
 
 Route::post('/patients/{id}/appointments', [PatientAppointmentController::class, 'store']);
 Route::get('/patients/{id}/appointments/upcomings', [PatientAppointmentController::class, 'index']);
