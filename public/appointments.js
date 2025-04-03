@@ -93,17 +93,18 @@ function addAppointment() {
         alert("You must be logged in to book an appointment.");
         return;
     }
+    
+    const date = $("#appointmentDate").val();
+    const time = $('#appointmentTime').val();
 
-    const doctor_id = document.getElementById("doctor").value;
-    const date = document.getElementById("date").value;
-    const time = document.getElementById("time").value;
-    const appointment_type = document.getElementById("appointmentType").value;
-    const selectedOption = appointmentType.options[appointmentType.selectedIndex];
-    const duration = selectedOption.getAttribute("data-duration");
+    const data = {
+        patient_id: patientId,
+        doctor_id: $('#appointmentDoctor').val(),
+        appointment_type: $("#appointmentType").val(),
+        start_time: `${date} ${time}:00`,
+    };
 
-    const startTimeStr = `${date} ${time}:00`;
-    const tempEndTime = new Date(new Date(startTimeStr).getTime() + duration * 1000 * 60).toTimeString().split(' ')[0];
-    const endTimeStr  = `${date} ${tempEndTime}`;
+    console.log('addAppointment', data);
 
     fetch(`/api/patients/${patientId}/appointments`, {
         method: "POST",
@@ -111,13 +112,7 @@ function addAppointment() {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({
-            patient_id: patientId,
-            doctor_id: doctor_id,
-            appointment_type: appointment_type,
-            start_time: startTimeStr,
-            end_time: endTimeStr
-        })
+        body: JSON.stringify(data)
     })
     .then(response => {
         if (response.ok) {
@@ -209,14 +204,16 @@ function renderTimeSlots() {
             // render doctor name
             const doctorSpan = document.createElement('span');
             doctorSpan.textContent = entry.doctor;
+            doctorSpan.setAttribute('data-id', entry.doctor_id);
             dateDiv.appendChild(doctorSpan);
 
             entry.available_start_time.forEach(time => {
                 const button = document.createElement("button");
                 button.classList.add("appointment-times");
                 button.textContent = time;
+                button.setAttribute('data-time', time);
                 button.classList.add("time-slot", type);
-                button.onclick = () => selectTime(entry.date, time);
+                button.onclick = () => selectTime(entry.date, time, type, entry.doctor_id);
                 dateDiv.appendChild(button);
             });
         });
@@ -240,8 +237,14 @@ function updateAvailableTimes() {
 
     $(`div.appointment-times-group.${selectedType}`).css("display", "block");
     $(`div.slot-date.${selectedType}[data-date="${selectedDate}"]`).css("display", "block");
+
+    $('#addAppointmentBtn').css("display", "block");
 }
 
-function selectTime(date, time) {
-    alert(`Selected appointment on ${date} at ${time}`);
+function selectTime(date, time, type, doctor_id) {
+    $(`button.appointment-times.time-slot`).css('background', '');
+    $(`button.appointment-times.time-slot.${type}[data-time="${time}"]`).css('background', 'blanchedalmond');
+
+    $('#appointmentTime').val(time);
+    $('#appointmentDoctor').val(doctor_id);
 }

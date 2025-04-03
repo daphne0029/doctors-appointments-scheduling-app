@@ -51,7 +51,7 @@ class AppointmentController extends Controller
     {
         // Get today's date & the next 7 days (excluding today)
         $today = now()->toDateString();
-        $weekDates = collect(range(1, 7))->map(fn($i) => now()->addDays($i)->toDateString());
+        $weekDates = collect(range(1, 8))->map(fn($i) => now()->addDays($i)->toDateString());
 
         $appointmentTypes = config('appointment_types');
         $doctors = config('doctors');

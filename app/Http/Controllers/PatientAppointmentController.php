@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\AppointmentType;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -61,7 +62,7 @@ class PatientAppointmentController extends Controller
             'doctor_id'          => 'required|integer',
             'appointment_type'   => 'required|string|in:' . implode(',', $appointmentTypes),
             'start_time' => 'required|date',
-            'end_time'   => 'required|date',
+            // 'end_time'   => 'required|date',
         ]);
 
         if ($validator->fails()) {
@@ -77,8 +78,11 @@ class PatientAppointmentController extends Controller
           return response()->json(['error' => 'No doctor found. Please check the doctor ID.'], 400);
         }
 
+        // Calculate end time with appointment_type
+        $duration = AppointmentType::getAppointmentDuration($request->appointment_type);
+
         $appointmentStartTime = Carbon::parse($request->start_time);
-        $appointmentEndTime = Carbon::parse($request->end_time);
+        $appointmentEndTime = $appointmentStartTime->copy()->addMinutes($duration);
 
         // Check if doctor is available
         $isAvailable = $this->isDoctorAvailable($doctorSchedule, $appointmentStartTime, $appointmentEndTime);
@@ -93,9 +97,13 @@ class PatientAppointmentController extends Controller
             ], 400);  // 400 Bad Request
         }
 
-        $appointment = Appointment::create($request->only([
-          'patient_id', 'doctor_id', 'appointment_type', 'start_time', 'end_time'
-        ]));
+        $appointment = Appointment::create([
+            'patient_id' => $request->patient_id,
+            'doctor_id' => $request->doctor_id,
+            'appointment_type' => $request->appointment_type,
+            'start_time' => $request->start_time,
+            'end_time' => $appointmentEndTime->format('Y-m-d H:i:s'),
+        ]);
 
         return response()->json([
             'message' => 'Appointment created successfully',

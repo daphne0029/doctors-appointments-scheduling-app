@@ -80,6 +80,16 @@ return [
         'email' => 'draco.malfoy@example.com',
         'schedules' => [
           [
+            'day_of_week' => 'Tuesday',
+            'start_time' => '09:00:00',
+            'end_time' => '12:00:00',
+          ],
+          [
+            'day_of_week' => 'Tuesday',
+            'start_time' => '13:00:00',
+            'end_time' => '17:00:00',
+          ],
+          [
             'day_of_week' => 'Saturday',
             'start_time' => '09:00:00',
             'end_time' => '12:00:00',

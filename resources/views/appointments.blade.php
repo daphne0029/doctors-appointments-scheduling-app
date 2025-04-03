@@ -67,9 +67,13 @@
         <option value="" disabled selected>Select a date</option>
     </select>
 
+    <input type="hidden" id="appointmentTime" name="appointmentTime" value="">
+    <input type="hidden" id="appointmentDoctor" name="appointmentDoctor" value="">
     <div id="appointmentSlots">
       <!-- Time slots will be dynamically displayed here -->
     </div>
+
+    <button style="margin-top: 20px; display: none;" id="addAppointmentBtn" onclick="addAppointment()">Submit</button>
 
     <hr>
     <hr>
