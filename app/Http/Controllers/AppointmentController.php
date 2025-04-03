@@ -57,64 +57,75 @@ class AppointmentController extends Controller
         $appointmentTypes = config('appointment_types');
 
         // Define working hours (assuming all doctors have the same hours)
-        $workStart = '09:00';
-        $workEnd = '17:00';
         $appointmentsConfig = config('appointments');
         $interval = (int) $appointmentsConfig['appointment_interval']; // minutes
+        $doctors = config('doctors'); // Get doctor schedules from config
 
-        // Get booked appointments within the week
+        // Get booked appointments and group them by date + doctor ID
         $bookedAppointments = Appointment::whereBetween('start_time', [$weekDates->first(), $weekDates->last()])
             ->get()
-            ->groupBy(fn($appt) => Carbon::parse($appt->start_time)->toDateString());
+            ->groupBy(fn($appt) => $appt->doctor_id . '-' . Carbon::parse($appt->start_time)->toDateString());
 
         $availableAppointments = [];
 
         foreach ($appointmentTypes as $typeKey => $typeData) {
             $availableAppointments[$typeKey] = [];
-
+    
             foreach ($weekDates as $date) {
-                $availableTimes = [];
-
-                // Get booked appointments for this specific date
-                $bookedForDate = $bookedAppointments[$date] ?? collect();
-
-                // Convert booked appointments into [start, end] timestamps
-                $bookedTimes = $bookedForDate->map(fn($appt) => [
-                    'start' => Carbon::parse($appt->start_time),
-                    'end' => Carbon::parse($appt->start_time)->
-                      addMinutes(AppointmentType::getAppointmentDuration($appt->appointment_type))
-                ]);
-
-                // Generate time slots for the day
-                $start = Carbon::parse("{$date} {$workStart}");
-                $end = Carbon::parse("{$date} {$workEnd}");
-                $duration = (int) $typeData['duration_in_mins'];
-
-                while ($start->lt($end)) {
-                    $slotStart = $start->copy();
-                    $slotEnd = $slotStart->copy()->addMinutes($duration);
+                $dayOfWeek = Carbon::parse($date)->format('l'); // e.g., "Wednesday"
     
-                    // Ensure the slot fits within working hours
-                    if ($slotEnd->gt($end)) break;
-    
-                    // Check if this slot overlaps with any existing appointment for the date
-                    $isOverlapping = $bookedTimes->contains(fn($appt) =>
-                        $slotStart->lt($appt['end']) && $slotEnd->gt($appt['start'])
-                    );
+                foreach ($doctors as $doctorId => $doctorData) {
+                    // Find this doctor's schedule for the given day
+                    $doctorSchedule = collect($doctorData['schedules'])->firstWhere('day_of_week', $dayOfWeek);
 
-                    if (!$isOverlapping) {
-                        $availableTimes[] = $slotStart->format('H:i');
+                    if (!$doctorSchedule) continue; // Skip if doctor doesn't work that day
+    
+                    $startTime = Carbon::parse("{$date} {$doctorSchedule['start_time']}");
+                    $endTime = Carbon::parse("{$date} {$doctorSchedule['end_time']}");
+                    $duration = (int) $typeData['duration_in_mins'];
+    
+                    $availableTimes = [];
+                    $bookedForDoctorAndDate = $bookedAppointments[$doctorId . '-' . $date] ?? collect();
+    
+                    // Convert booked appointments into [start, end] timestamps
+                    $bookedTimes = $bookedForDoctorAndDate->map(fn($appt) => [
+                        'start' => Carbon::parse($appt->start_time),
+                        'end' => Carbon::parse($appt->start_time)->
+                          addMinutes(AppointmentType::getAppointmentDuration($appt->appointment_type)),
+                    ]);
+                    // print $bookedTimes;
+    
+                    while ($startTime->lt($endTime)) {
+                        $slotStart = $startTime->copy();
+                        $slotEnd = $slotStart->copy()->addMinutes($duration);
+    
+                        if ($slotEnd->gt($endTime)) break; // Ensure it fits in working hours
+    
+                        // print $slotStart->format('H:i');
+                        // Check against ALL booked appointments before adding
+                        $isOverlapping = false;
+                        foreach ($bookedTimes as $appt) {
+                            if ($slotStart->lt($appt['end']) && $slotEnd->gt($appt['start'])) {
+                                $isOverlapping = true;
+                                break; // No need to check further
+                            }
+                        }
+                        // var_dump($isOverlapping);
+    
+                        if (!$isOverlapping) {
+                            $availableTimes[] = $slotStart->format('H:i');
+                        }
+    
+                        $startTime->addMinutes($interval); // Move to next slot
                     }
-
-                    // Move to next 10-minute slot
-                    $start->addMinutes($interval); 
-                }
-
-                if (!empty($availableTimes)) {
-                    $availableAppointments[$typeKey][] = [
-                        'date' => $date,
-                        'available_start_time' => $availableTimes,
-                    ];
+    
+                    if (!empty($availableTimes)) {
+                        $availableAppointments[$typeKey][] = [
+                            'date' => $date,
+                            'doctor' => $doctorData['name'],
+                            'available_start_time' => $availableTimes,
+                        ];
+                    }
                 }
             }
         }
