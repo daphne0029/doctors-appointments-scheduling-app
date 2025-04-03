@@ -11,6 +11,8 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::post('/patients/login', [PatientController::class, 'login']);
+
 Route::get('/doctors', [DoctorController::class, 'index']);
 Route::get('/doctors/{id}', [DoctorController::class, 'show']);
 
@@ -20,5 +22,5 @@ Route::get('/patients/{id}', [PatientController::class, 'show']);
 Route::get('/appointments', [AppointmentController::class, 'index']);
 
 Route::post('/patients/{id}/appointments', [PatientAppointmentController::class, 'store']);
-Route::get('/patients/{id}/appointments', [PatientAppointmentController::class, 'index']);
+Route::get('/patients/{id}/appointments/upcomings', [PatientAppointmentController::class, 'index']);
 Route::delete('/patients/{id}/appointments/{appointmentId}', [PatientAppointmentController::class, 'destroy']);

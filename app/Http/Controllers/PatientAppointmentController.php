@@ -18,11 +18,27 @@ class PatientAppointmentController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
     
-        // Return the patient's appointments
-        $appointments = Appointment::where('patient_id', $patientId)->get();
-    
+        $doctors = config('doctors');
+
+        // Return the patient's upcoming appointments
+        $appointments = Appointment::where('patient_id', $patient->id)
+            ->where('start_time', '>', now())
+            ->orderBy('start_time', 'asc')
+            ->get()
+            ->map(function ($appointment) use ($doctors) {
+                return [
+                    'id' => $appointment->id,
+                    'appointment_type' => $appointment->appointment_type,
+                    'start_time' => $appointment->start_time,
+                    'end_time' => $appointment->end_time,
+                    'doctor_id' => $appointment->doctor_id,
+                    'doctor_name' => $doctors[$appointment->doctor_id]['name'] ?? 'Unknown Doctor',
+                ];
+            });
+
         return response()->json(['appointments' => $appointments]);
     }
+
     /**
      * Create an appointment
      *

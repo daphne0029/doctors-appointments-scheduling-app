@@ -56,4 +56,35 @@ class PatientController extends Controller
 
         return response()->json($patient);
     }
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|exists:patients,email',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Patient not found',
+            ], 404);
+        }
+    
+        $patient = Patient::where('email', $request->email)->first();
+    
+        // If patient has no token, generate one
+        if (!$patient->token) {
+            $patient->token = substr(md5(openssl_random_pseudo_bytes(20)), 20);
+            $patient->save();
+        }
+    
+        return response()->json([
+            'message' => 'Login successful',
+            'patient' => [
+                'id'    => $patient->id,
+                'name'  => $patient->name,
+                'email' => $patient->email,
+                'token' => $patient->token,
+            ],
+        ]);
+    }    
 }
