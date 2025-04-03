@@ -82,6 +82,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     calendar.render();
+
+    fetchAppointments();
 });
 
 function addAppointment() {
@@ -165,4 +167,81 @@ function updateDurationInfo() {
     const selectedOption = document.getElementById("appointmentType").selectedOptions[0];
     const duration = selectedOption.getAttribute("data-duration");
     document.getElementById("durationInfo").textContent = `Duration: ${duration} minutes`;
+}
+
+let availableAppointments = {}; // Store available times fetched from API
+
+// Fetch available appointments and render them
+async function fetchAppointments() {
+    const response = await fetch("/api/available-appointments");
+    availableAppointments = await response.json();
+    renderTimeSlots();
+    // $('div.appointment-times-group.new_patient').css('display', 'block');
+}
+
+function renderTimeSlots() {
+    const container = document.getElementById("appointmentSlots");
+    container.innerHTML = ""; // Clear existing slots
+
+    console.log(availableAppointments);
+
+    const distinctDates = [];
+
+    Object.keys(availableAppointments).forEach(type => {
+        const typeDiv = document.createElement("div");
+        typeDiv.classList.add("appointment-times-group", type);
+        typeDiv.setAttribute("id", type);
+        typeDiv.style.display = "none";
+        container.appendChild(typeDiv);
+
+        availableAppointments[type].forEach(entry => {
+            if(!distinctDates.includes(entry.date)) {
+                distinctDates.push(entry.date);
+            }
+
+            // render time slots
+            const dateDiv = document.createElement("div");
+            dateDiv.classList.add("slot-date", type);
+            dateDiv.setAttribute('data-date', entry.date);
+            dateDiv.style.display = "none";
+            typeDiv.appendChild(dateDiv);
+
+            // render doctor name
+            const doctorSpan = document.createElement('span');
+            doctorSpan.textContent = entry.doctor;
+            dateDiv.appendChild(doctorSpan);
+
+            entry.available_start_time.forEach(time => {
+                const button = document.createElement("button");
+                button.classList.add("appointment-times");
+                button.textContent = time;
+                button.classList.add("time-slot", type);
+                button.onclick = () => selectTime(entry.date, time);
+                dateDiv.appendChild(button);
+            });
+        });
+    });
+
+    // populate date dropdown
+    distinctDates.forEach(d => {
+        const dateOption = document.createElement('option');
+        dateOption.textContent = d;
+        dateOption.setAttribute('disable', true);
+        $('#appointmentDate').append(dateOption);
+    });
+}
+
+function updateAvailableTimes() {
+    const selectedType = $("#appointmentType").val();
+    const selectedDate = $("#appointmentDate").val();
+
+    $(`div.slot-date`).css("display", "none");
+    $("div.appointment-times-group").css("display", "none");
+
+    $(`div.appointment-times-group.${selectedType}`).css("display", "block");
+    $(`div.slot-date.${selectedType}[data-date="${selectedDate}"]`).css("display", "block");
+}
+
+function selectTime(date, time) {
+    alert(`Selected appointment on ${date} at ${time}`);
 }

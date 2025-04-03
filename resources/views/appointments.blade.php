@@ -13,39 +13,34 @@
     <script src="/appointments.js"></script>
 
     <style>
-        .form-container {
-            display: none; /* Initially hidden */
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background: #f9f9f9;
-            margin-top: 10px;
-        }
+      .appointment-times {
+          flex-wrap: wrap;
+          gap: 10px; /* Space between buttons */
+          margin-top: 20px;
+          margin-left: 5px;
+      }
 
-        .form-container input, 
-        .form-container select, 
-        .form-container button {
-            display: block;
-            width: 100%;
-            margin: 5px 0;
-            padding: 8px;
-        }
+      .appointment-times button {
+          padding: 10px 20px;
+          font-size: 16px;
+          cursor: pointer;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          background-color: #f0f0f0;
+          transition: background-color 0.3s;
+      }
 
-        .toggle-btn {
-            background: #20b2aa;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
-            border-radius: 5px;
-        }
+      .appointment-times button:hover {
+          background-color: #007bff;
+          color: white;
+      }
 
-        .toggle-btn:focus {
-            outline: none;
-        }
+      .appointment-times button.selected {
+          background-color: #28a745;
+          color: white;
+      }
     </style>
+
 
 </head>
 <body>
@@ -59,32 +54,21 @@
         <p>Loading...</p>
     </div>
 
-    <button class="toggle-btn" onclick="toggleForm()"> + Add Appointment</button>
+    <label for="appointmentType">Appointment Type:</label>
+    <select id="appointmentType" onchange="updateAvailableTimes()">
+        <option value="new_patient">New Patient Consultation</option>
+        <option value="consultation">Regular Consultation</option>
+        <option value="follow_up">Follow-up Consultation</option>
+    </select>
 
-    <div style="display: none;" class="form-container" id="appointmentForm">
-        <label for="doctor">Select Doctor:</label>
-        <select id="doctor">
-            <option value="1">Dr. Harry Potter</option>
-            <option value="2">Dr. Hermione Granger</option>
-            <option value="3">Dr. Ron Weasley</option>
-            <option value="4">Dr. Draco Malfoy</option>
-        </select>
+    <!-- Dropdown for selecting a date (will be populated dynamically) -->
+    <label for="appointmentDate">Select Date:</label>
+    <select id="appointmentDate" onchange="updateAvailableTimes()">
+        <option value="" disabled selected>Select a date</option>
+    </select>
 
-        <label for="appointmentType">Appointment Type:</label>
-        <select id="appointmentType" onchange="updateDurationInfo()">
-            <option value="new_patient" data-duration="30">New Patient Consultation (30 mins)</option>
-            <option value="consultation" data-duration="60">Regular Consultation (60 mins)</option>
-            <option value="follow_up" data-duration="20">Follow-up Consultation (20 mins)</option>
-        </select>
-        <p class="duration-info" id="durationInfo">Duration: 30 minutes</p>
-
-        <label for="date">Select Date:</label>
-        <input style="width: 20%;" type="date" id="date">
-
-        <label for="time">Select Time:</label>
-        <input style="width: 20%;" type="time" id="time">
-
-        <button onclick="addAppointment()">Submit</button>
+    <div id="appointmentSlots">
+      <!-- Time slots will be dynamically displayed here -->
     </div>
 
     <hr>

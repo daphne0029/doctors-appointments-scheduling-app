@@ -121,6 +121,7 @@ class AppointmentController extends Controller
                         $availableAppointments[$typeKey][] = [
                             'date' => $date,
                             'doctor' => $doctorData['name'],
+                            'doctor_id' => $doctorId,
                             'available_start_time' => $availableTimes,
                         ];
                     }
