@@ -2,7 +2,7 @@
 
 ## App
 
-![Appointment Scheduling App](./AppScreenshot.png "Appointment Scheduling App Screenshot")
+![Appointment Scheduling App](./AppScreenshot2.png "Appointment Scheduling App Screenshot")
 
 ## Getting Started
 
