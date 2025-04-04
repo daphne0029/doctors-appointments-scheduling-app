@@ -22,7 +22,7 @@ class AppointmentController extends Controller
     /**
      * @OA\Get(
      *     path="/appointments",
-     *     summary="Get all appointments",
+     *     summary="Get all appointments. For MVP veriosn, fetch 50 appointment.",
      *     tags={"Appointments"},
      *     @OA\Response(
      *         response=200,

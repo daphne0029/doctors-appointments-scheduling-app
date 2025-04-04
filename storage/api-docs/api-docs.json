@@ -18,7 +18,7 @@
                 "tags": [
                     "Appointments"
                 ],
-                "summary": "Get all appointments",
+                "summary": "Get all appointments. For MVP veriosn, fetch 50 appointment.",
                 "operationId": "c68dab577f29c04c4422e6cb86fa36ce",
                 "responses": {
                     "200": {
