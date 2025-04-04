@@ -21,16 +21,18 @@ class PatientAppointmentController extends Controller
         }
     
         $doctors = config('doctors');
+        $types = config('appointment_types');
 
         // Return the patient's upcoming appointments
         $appointments = Appointment::where('patient_id', $patient->id)
             ->where('start_time', '>', now())
             ->orderBy('start_time', 'asc')
             ->get()
-            ->map(function ($appointment) use ($doctors) {
+            ->map(function ($appointment) use ($doctors, $types) {
                 return [
                     'id' => $appointment->id,
                     'appointment_type' => $appointment->appointment_type,
+                    'appointment_name' => $types[$appointment->appointment_type]['name'],
                     'start_time' => $appointment->start_time,
                     'end_time' => $appointment->end_time,
                     'doctor_id' => $appointment->doctor_id,
@@ -82,5 +84,33 @@ class PatientAppointmentController extends Controller
             'message' => 'Appointment created successfully',
             'appointment' => $result['appointment'],
         ], 201);
+    }
+
+    public function destroy(Request $request, $patientId, $appointmentId)
+    {
+        $token = $request->bearerToken();
+
+        if (!$token || !($patient = Patient::validateToken($patientId, $token))) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Find the appointment
+        $appointment = Appointment::where('id', $appointmentId)
+                                ->where('patient_id', $patientId)
+                                ->first();
+
+        if (!$appointment) {
+            return response()->json(['error' => 'Appointment not found.'], 404);
+        }
+
+        // Check if the appointment has already passed
+        if ($appointment->end_time < Carbon::now()) {
+            return response()->json(['error' => 'Cannot delete past appointments.'], 400);
+        }
+
+        // Delete the appointment
+        $appointment->delete();
+
+        return response()->json(['message' => 'Appointment deleted successfully.'], 204);
     }
 }
