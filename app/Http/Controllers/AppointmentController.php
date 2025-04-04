@@ -44,7 +44,7 @@ class AppointmentController extends Controller
         }
 
         // Get the results (can be paginated)
-        $appointments = $appointments->paginate(10);
+        $appointments = $appointments->paginate(50);
 
         return response()->json([
             'appointments' => $appointments,

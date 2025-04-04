@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         appointmentList.innerHTML = "";
 
         if (data.appointments.length === 0) {
-            appointmentList.innerHTML = "<p>No upcoming appointments.</p>";
+            appointmentList.innerHTML = "<p>You don't have any upcoming appoitments.</p>";
             return;
         }
 

@@ -43,8 +43,6 @@ php artisan serve
 #### 6️⃣ Run frontend 
 Frontend is run in jQeury. No need to run any npm
 
-## Getting Started
-
 ### 📋 App Configuration Files
 
 1. **`appointment_types.php`**  

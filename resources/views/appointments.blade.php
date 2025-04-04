@@ -43,6 +43,7 @@
       .block{
         display: inline-block;
         vertical-align:top;
+        min-height: 200px;
       }
 
       .appointment-block {
@@ -101,6 +102,16 @@
         border: none;
         cursor: pointer;
       }
+
+      .clinic-calendar{
+        padding: 10px 20px;
+        border: 5px solid #178b6f;
+        border-radius: 5px;
+      }
+
+      #appointmentSlots{
+        margin-top: 10px;
+      }
     </style>
 
 </head>
@@ -150,9 +161,9 @@
     <div>
 
     <hr>
-    <hr>
-    <h2>Clinic Full Schedules:</h2>
-    <div style="margin-top: 20px;" id="calendar"></div>
-
+    <div class="clinic-calendar">
+      <h2>Clinic's Full Schedules:</h2>
+      <div  style="margin-top: 20px;" id="calendar"></div>
+    </div>
 </body>
 </html>
