@@ -1,4 +1,4 @@
-# 🚀 My App
+# 🚀 Appointment Scheduling App
 
 ## Getting Started
 
@@ -16,10 +16,6 @@ Ensure you have the following installed:
 ### 📦 Installation
 
 #### 1️⃣ Clone the repository
-```
-git clone https://github.com/your-repo.git
-cd your-repo
-```
 
 #### 2️⃣ Install dependencies
 ```
