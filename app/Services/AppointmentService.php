@@ -179,4 +179,81 @@ class AppointmentService
         }
         return false;
     }
+
+    /**
+     * Create Appointment
+     * 
+     * @param array
+     * @return array
+     */
+    public function createAppointment(array $data): array
+    {   
+        $doctorSchedule = config('doctors.' . $data['doctor_id'] . '.schedules');
+        if (!$doctorSchedule) {
+            return ['error' => 'No doctor found. Please check the doctor ID.'];
+        }
+
+        [$startTime, $endTime] = $this->calculateAppointmentTimes($data['start_time'], $data['appointment_type']);
+    
+        if (!$this->isDoctorAvailable($doctorSchedule, $startTime, $endTime)) {
+            return ['error' => 'Doctor is not available at the selected time.'];
+        }
+    
+        if (Appointment::isOverlapping($data['doctor_id'], $startTime, $endTime)) {
+            return ['error' => 'The appointment time overlaps with an existing appointment.'];
+        }
+    
+        $appointment = Appointment::create([
+            'patient_id'       => $data['patient_id'],
+            'doctor_id'        => $data['doctor_id'],
+            'appointment_type' => $data['appointment_type'],
+            'start_time'       => $startTime->format('Y-m-d H:i:s'),
+            'end_time'         => $endTime->format('Y-m-d H:i:s'),
+        ]);
+    
+        return ['appointment' => $appointment];
+    }
+
+    /**
+     * Check if the doctor is available at the requested appointment time
+     * @param array $schedule
+     * @param Carbon $startTime
+     * @param Carbon $endTime
+     */
+    private function isDoctorAvailable($schedule, Carbon $startTime, Carbon $endTime)
+    {
+        foreach ($schedule as $workingHours) {
+            $workingDay = $workingHours['day_of_week'];
+            
+            // Check if the requested time matches the doctor's working schedule
+            if ($startTime->is($workingDay)) {
+                $selectedDate = $startTime->toDateString();
+                $workingStart = Carbon::parse("$selectedDate {$workingHours['start_time']}");
+                $workingEnd = Carbon::parse("$selectedDate {$workingHours['end_time']}");
+                
+                // If the requested time is within the working hours
+                if ($startTime->between($workingStart, $workingEnd) && $endTime->between($workingStart, $workingEnd)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Calculate the the start and end time by a given start time and appointment type
+     * 
+     * @param string $start
+     * @param string $type
+     * @return array [$startTime, $endTime]
+     */
+    private function calculateAppointmentTimes(string $start, string $type): array
+    {
+        $duration = AppointmentType::getAppointmentDuration($type);
+        $startTime = Carbon::parse($start);
+        $endTime = $startTime->copy()->addMinutes($duration);
+    
+        return [$startTime, $endTime];
+    }
 }
