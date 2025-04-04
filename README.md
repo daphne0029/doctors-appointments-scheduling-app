@@ -1,5 +1,9 @@
 # 🚀 Appointment Scheduling App
 
+## App
+
+![Appointment Scheduling App](./AppScreenshot.png "Appointment Scheduling App Screenshot")
+
 ## Getting Started
 
 ### Prerequisites
@@ -58,3 +62,7 @@ Go to http://127.0.0.1:8000/patients
    - **Doctor Details**: Name, contact, etc.
    - **Working Schedule**: A list of working days and hours for each doctor. This is used to determine when the doctor is available for appointments.
 
+### 📋 Swagger Doc
+You can find it under /storage/api-docs/api-docs.json
+Install Swagger Viewer on VSCode to view it.
+![Swagger Docs](./swaggerExample.png "Swagger Docs")
