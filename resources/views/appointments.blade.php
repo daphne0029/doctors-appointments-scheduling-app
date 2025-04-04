@@ -89,6 +89,18 @@
         background-color: #f9f9f9; 
         box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
       }
+
+      .sign-out-btn{
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        padding: 5px 10px;
+        background-color: #ff4d4d; 
+        border-radius: 5px;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
     </style>
 
 </head>
@@ -97,6 +109,11 @@
     <h2>Doctor's Appointments</h2>
 
     <div id="greeting" style="display: none; font-size: 20px; margin-bottom: 20px;"></div>
+
+    <button onclick="handleSignOut()" class="sign-out-btn" style="">
+      Sign Out
+    </button>
+
 
     <div>
       <div class="block">

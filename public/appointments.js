@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     calendar.render();
 
-    fetchAppointments();
+    fetchAppointments();      
 });
 
 function addAppointment() {
@@ -254,3 +254,10 @@ function selectTime(date, time, type, doctor_id) {
     $('#appointmentTime').val(time);
     $('#appointmentDoctor').val(doctor_id);
 }
+
+const handleSignOut = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('patient_name');
+    localStorage.removeItem('patientId'); // Remove other stored items if needed
+    window.location.href = '/patients'; // Redirect to login page
+  };
