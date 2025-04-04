@@ -20,9 +20,28 @@ class AppointmentController extends Controller
     }
 
     /**
-     * Retrieve all appointments
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Get(
+     *     path="/appointments",
+     *     summary="Get all appointments",
+     *     tags={"Appointments"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of appointments",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="patient_id", type="integer", example=1),
+     *                 @OA\Property(property="doctor_id", type="integer", example=1),
+     *                 @OA\Property(property="appointment_type", type="string", example="new_patient"),
+     *                 @OA\Property(property="start_time", type="string", format="date-time", example="2025-04-01 09:00:00"),
+     *                 @OA\Property(property="end_time", type="string", format="date-time", example="2025-04-01 10:00:00"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025-04-03T02:14:15.000000Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2025-04-03T02:14:15.000000Z"),
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function index(Request $request)
     {
@@ -52,9 +71,83 @@ class AppointmentController extends Controller
     }
 
     /**
-     * Get available appointment slots for the next few days.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Get(
+     *     path="/appointments/available",
+     *     summary="Get available appointment times",
+     *     tags={"Appointments"},
+     *     description="Retrieve available appointment times for new patients, consultations, and follow-ups",
+     *     @OA\Parameter(
+     *         name="next_number_of_days",
+     *         in="query",
+     *         description="Number of days in the future to retrieve available appointment slots",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=7
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="new_patient",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="date", type="string", example="2025-04-04"),
+     *                     @OA\Property(property="doctor", type="string", example="Hermione Granger"),
+     *                     @OA\Property(property="doctor_id", type="integer", example=2),
+     *                     @OA\Property(
+     *                         property="available_start_time",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="string",
+     *                             example="12:00"
+     *                         )
+     *                     )
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="consultation",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="date", type="string", example="2025-04-04"),
+     *                     @OA\Property(property="doctor", type="string", example="Ron Weasley"),
+     *                     @OA\Property(property="doctor_id", type="integer", example=3),
+     *                     @OA\Property(
+     *                         property="available_start_time",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="string",
+     *                             example="09:00"
+     *                         )
+     *                     )
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="follow_up",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="date", type="string", example="2025-04-05"),
+     *                     @OA\Property(property="doctor", type="string", example="Draco Malfoy"),
+     *                     @OA\Property(property="doctor_id", type="integer", example=4),
+     *                     @OA\Property(
+     *                         property="available_start_time",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="string",
+     *                             example="13:00"
+     *                         )
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function availableAppointments(Request $request): \Illuminate\Http\JsonResponse
     {

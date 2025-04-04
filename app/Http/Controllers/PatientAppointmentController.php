@@ -12,6 +12,57 @@ use Carbon\Carbon;
 
 class PatientAppointmentController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/patients/{patientId}/appointments/upcomings",
+     *     summary="Get patient's upcoming appointments",
+     *     description="Fetch the upcoming appointments for a specific patient by patient ID. The patient's token must be valid.",
+     *     tags={"Patient Appointments"},
+     *     @OA\Parameter(
+     *         name="patientId",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the patient",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="Authorization", type="string", description="Bearer token for authentication", example="Bearer token")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of upcoming appointments for the patient",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="appointments",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="appointment_type", type="string", example="follow_up"),
+     *                     @OA\Property(property="appointment_name", type="string", example="Follow-up Consultation"),
+     *                     @OA\Property(property="start_time", type="string", format="date-time", example="2025-04-03T09:00:00"),
+     *                     @OA\Property(property="end_time", type="string", format="date-time", example="2025-04-03T09:30:00"),
+     *                     @OA\Property(property="doctor_id", type="integer", example=1),
+     *                     @OA\Property(property="doctor_name", type="string", example="Dr. Harry Potter")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized, invalid or missing token",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Unauthorized")
+     *         )
+     *     )
+     * )
+     */
     public function index(Request $request, $patientId)
     {
         $token = $request->bearerToken();
@@ -44,10 +95,64 @@ class PatientAppointmentController extends Controller
     }
 
     /**
-     * Create an appointment
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     path="/patients/{patientId}/appointments",
+     *     summary="Create a new appointment for a patient",
+     *     description="This endpoint allows the creation of a new appointment for the specified patient. The patient's token must be valid.",
+     *     tags={"Patient Appointments"},
+     *     @OA\Parameter(
+     *         name="patientId",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the patient",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="patient_id", type="integer", description="The ID of the patient", example=1),
+     *             @OA\Property(property="doctor_id", type="integer", description="The ID of the doctor for the appointment", example=1),
+     *             @OA\Property(property="appointment_type", type="string", description="The type of appointment", example="follow_up"),
+     *             @OA\Property(property="start_time", type="string", format="date-time", description="The start time of the appointment", example="2025-04-03T09:00:00")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Appointment created successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Appointment created successfully"),
+     *             @OA\Property(
+     *                 property="appointment",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="patient_id", type="integer", example=1),
+     *                 @OA\Property(property="doctor_id", type="integer", example=1),
+     *                 @OA\Property(property="appointment_type", type="string", example="follow_up"),
+     *                 @OA\Property(property="start_time", type="string", format="date-time", example="2025-04-03T09:00:00"),
+     *                 @OA\Property(property="end_time", type="string", format="date-time", example="2025-04-03T09:30:00")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad request due to invalid data",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Validation failed"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized, invalid or missing token",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Unauthorized")
+     *         )
+     *     )
+     * )
      */
     public function store(Request $request, $patientId)
     {
@@ -86,6 +191,60 @@ class PatientAppointmentController extends Controller
         ], 201);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/patients/{patientId}/appointments/{appointmentId}",
+     *     summary="Delete an appointment for a patient",
+     *     description="Deletes an upcoming appointment for a patient if it exists and hasn’t already passed. Requires a valid Bearer token.",
+     *     tags={"Patient Appointments"},
+     *     @OA\Parameter(
+     *         name="patientId",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the patient",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="appointmentId",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the appointment to delete",
+     *         @OA\Schema(type="integer", example=10)
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Appointment deleted successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Appointment deleted successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Cannot delete past appointments",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Cannot delete past appointments.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized access",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Unauthorized")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Appointment not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Appointment not found.")
+     *         )
+     *     )
+     * )
+     */
     public function destroy(Request $request, $patientId, $appointmentId)
     {
         $token = $request->bearerToken();

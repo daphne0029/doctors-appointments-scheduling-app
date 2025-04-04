@@ -40,8 +40,8 @@ php artisan migrate --seed
 php artisan serve
 ```
 
-#### 6️⃣ Run frontend 
-Frontend is run in jQeury. No need to run any npm
+#### 6️⃣ Visit the login page to start
+Go to http://127.0.0.1:8000/patients
 
 ### 📋 App Configuration Files
 

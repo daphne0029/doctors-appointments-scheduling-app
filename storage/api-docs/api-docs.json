@@ -1,0 +1,976 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Appointment Scheduling API",
+        "description": "This is a simple API for managing appointments.",
+        "contact": {
+            "email": "support@example.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/appointments": {
+            "get": {
+                "tags": [
+                    "Appointments"
+                ],
+                "summary": "Get all appointments",
+                "operationId": "c68dab577f29c04c4422e6cb86fa36ce",
+                "responses": {
+                    "200": {
+                        "description": "A list of appointments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "patient_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "doctor_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "appointment_type": {
+                                                "type": "string",
+                                                "example": "new_patient"
+                                            },
+                                            "start_time": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-04-01 09:00:00"
+                                            },
+                                            "end_time": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-04-01 10:00:00"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-04-03T02:14:15.000000Z"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-04-03T02:14:15.000000Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/appointments/available": {
+            "get": {
+                "tags": [
+                    "Appointments"
+                ],
+                "summary": "Get available appointment times",
+                "description": "Retrieve available appointment times for new patients, consultations, and follow-ups",
+                "operationId": "f41e4454c22d6065954f152dfc0fbeef",
+                "parameters": [
+                    {
+                        "name": "next_number_of_days",
+                        "in": "query",
+                        "description": "Number of days in the future to retrieve available appointment slots",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 7
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "new_patient": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "date": {
+                                                        "type": "string",
+                                                        "example": "2025-04-04"
+                                                    },
+                                                    "doctor": {
+                                                        "type": "string",
+                                                        "example": "Hermione Granger"
+                                                    },
+                                                    "doctor_id": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "available_start_time": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "example": "12:00"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "consultation": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "date": {
+                                                        "type": "string",
+                                                        "example": "2025-04-04"
+                                                    },
+                                                    "doctor": {
+                                                        "type": "string",
+                                                        "example": "Ron Weasley"
+                                                    },
+                                                    "doctor_id": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "available_start_time": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "example": "09:00"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "follow_up": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "date": {
+                                                        "type": "string",
+                                                        "example": "2025-04-05"
+                                                    },
+                                                    "doctor": {
+                                                        "type": "string",
+                                                        "example": "Draco Malfoy"
+                                                    },
+                                                    "doctor_id": {
+                                                        "type": "integer",
+                                                        "example": 4
+                                                    },
+                                                    "available_start_time": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "example": "13:00"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/doctors": {
+            "get": {
+                "tags": [
+                    "Doctors"
+                ],
+                "summary": "Get all doctors with their schedules",
+                "description": "Retrieve a list of all doctors with their schedules in the system",
+                "operationId": "cd066ac893c261ef13773c81ebc8c53e",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Harry Potter"
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "harry.potter@example.com"
+                                            },
+                                            "schedules": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "day_of_week": {
+                                                            "type": "string",
+                                                            "example": "Sunday"
+                                                        },
+                                                        "start_time": {
+                                                            "type": "string",
+                                                            "format": "time",
+                                                            "example": "09:00:00"
+                                                        },
+                                                        "end_time": {
+                                                            "type": "string",
+                                                            "format": "time",
+                                                            "example": "12:00:00"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/doctors/{id}": {
+            "get": {
+                "tags": [
+                    "Doctors"
+                ],
+                "summary": "Get a specific doctor by ID",
+                "description": "Retrieve a specific doctor's details, including their name, email, and schedules",
+                "operationId": "f7d27b7312d2bcfb24da4bf9b7109e21",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the doctor",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with doctor details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Harry Potter"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "harry.potter@example.com"
+                                        },
+                                        "schedules": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "day_of_week": {
+                                                        "type": "string",
+                                                        "example": "Sunday"
+                                                    },
+                                                    "start_time": {
+                                                        "type": "string",
+                                                        "format": "time",
+                                                        "example": "09:00:00"
+                                                    },
+                                                    "end_time": {
+                                                        "type": "string",
+                                                        "format": "time",
+                                                        "example": "12:00:00"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Doctor not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Doctor not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/patients/{patientId}/appointments/upcomings": {
+            "get": {
+                "tags": [
+                    "Patient Appointments"
+                ],
+                "summary": "Get patient's upcoming appointments",
+                "description": "Fetch the upcoming appointments for a specific patient by patient ID. The patient's token must be valid.",
+                "operationId": "718f65410611ee27774583bb737dff3c",
+                "parameters": [
+                    {
+                        "name": "patientId",
+                        "in": "path",
+                        "description": "The ID of the patient",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "Authorization": {
+                                        "description": "Bearer token for authentication",
+                                        "type": "string",
+                                        "example": "Bearer token"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "List of upcoming appointments for the patient",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "appointments": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "appointment_type": {
+                                                        "type": "string",
+                                                        "example": "follow_up"
+                                                    },
+                                                    "appointment_name": {
+                                                        "type": "string",
+                                                        "example": "Follow-up Consultation"
+                                                    },
+                                                    "start_time": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-04-03T09:00:00"
+                                                    },
+                                                    "end_time": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-04-03T09:30:00"
+                                                    },
+                                                    "doctor_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "doctor_name": {
+                                                        "type": "string",
+                                                        "example": "Dr. Harry Potter"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized, invalid or missing token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/patients/{patientId}/appointments": {
+            "post": {
+                "tags": [
+                    "Patient Appointments"
+                ],
+                "summary": "Create a new appointment for a patient",
+                "description": "This endpoint allows the creation of a new appointment for the specified patient. The patient's token must be valid.",
+                "operationId": "1e8ef864d52731bece0ebbd1923daaee",
+                "parameters": [
+                    {
+                        "name": "patientId",
+                        "in": "path",
+                        "description": "The ID of the patient",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "patient_id": {
+                                        "description": "The ID of the patient",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "doctor_id": {
+                                        "description": "The ID of the doctor for the appointment",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "appointment_type": {
+                                        "description": "The type of appointment",
+                                        "type": "string",
+                                        "example": "follow_up"
+                                    },
+                                    "start_time": {
+                                        "description": "The start time of the appointment",
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-04-03T09:00:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Appointment created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Appointment created successfully"
+                                        },
+                                        "appointment": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "patient_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "doctor_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "appointment_type": {
+                                                    "type": "string",
+                                                    "example": "follow_up"
+                                                },
+                                                "start_time": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-04-03T09:00:00"
+                                                },
+                                                "end_time": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-04-03T09:30:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request due to invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized, invalid or missing token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/patients/{patientId}/appointments/{appointmentId}": {
+            "delete": {
+                "tags": [
+                    "Patient Appointments"
+                ],
+                "summary": "Delete an appointment for a patient",
+                "description": "Deletes an upcoming appointment for a patient if it exists and hasn’t already passed. Requires a valid Bearer token.",
+                "operationId": "390d6f9bd28bd3ce3360690009379f3b",
+                "parameters": [
+                    {
+                        "name": "patientId",
+                        "in": "path",
+                        "description": "The ID of the patient",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "appointmentId",
+                        "in": "path",
+                        "description": "The ID of the appointment to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Appointment deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Appointment deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete past appointments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Cannot delete past appointments."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Appointment not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Appointment not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/patients": {
+            "post": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Create a new patient",
+                "description": "Create a new patient after validating the provided name and email",
+                "operationId": "f339d0077ba97fd7c2dcf90987d9b0cb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Name of the patient",
+                                        "type": "string",
+                                        "example": "Ross Galler"
+                                    },
+                                    "email": {
+                                        "description": "Email of the patient",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ross.galler@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Patient created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Patient created successfully"
+                                        },
+                                        "patient": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Ross Galler"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "ross.galler@example.com"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "e08bc6011a72"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-04-03T02:14:15.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-04-03T02:14:15.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string",
+                                                    "example": "The email has already been taken."
+                                                },
+                                                "property": null
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/patients/{id}": {
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Get a specific patient by ID",
+                "description": "Retrieve the details of a specific patient by their ID",
+                "operationId": "4731766140224a50c904dbd45837e97f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the patient",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Patient details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Ross Galler"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "ross.galler@example.com"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "e08bc6011a72089b82a2dbb2f62b4bfbdfb13148"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-04-03T02:14:15.000000Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-04-03T02:14:15.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Patient not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Patient not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/patients/login": {
+            "post": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Login a patient",
+                "description": "Login a patient by their email. If the patient does not have a token, one will be generated.",
+                "operationId": "36fedbf9febf206ecd434b97b7890887",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "description": "Email of the patient",
+                                        "type": "string",
+                                        "example": "ross.galler@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful, patient details returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login successful"
+                                        },
+                                        "patient": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Ross Galler"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "ross.galler@example.com"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "e08bc6011a72089b82a2dbb2f62b4bfbdfb13148"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Patient not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Patient not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Appointments",
+            "description": "Appointments"
+        },
+        {
+            "name": "Doctors",
+            "description": "Doctors"
+        },
+        {
+            "name": "Patient Appointments",
+            "description": "Patient Appointments"
+        },
+        {
+            "name": "Patients",
+            "description": "Patients"
+        }
+    ]
+}
