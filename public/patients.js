@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const email = document.getElementById("email").value.trim();
 
       if (!email) {
-          messageDiv.innerHTML = `<p style="color: red;">Email is required.</p>`;
+          messageDiv.innerHTML = `<p class="error-message">Email is required.</p>`;
           return;
       }
 
@@ -28,10 +28,10 @@ document.addEventListener("DOMContentLoaded", function () {
                   localStorage.setItem("patient_name", data.patient.name);
                   window.location.href = `/appointments?token=${data.patient.token}`;
               } else {
-                  messageDiv.innerHTML = `<p style="color: red;">${data.message}</p>`;
+                  messageDiv.innerHTML = `<p class="error-message">${data.message}</p>`;
               }
           })
-          .catch(() => messageDiv.innerHTML = `<p style="color: red;">Error occurred.</p>`);
+          .catch(() => messageDiv.innerHTML = `<p class="error-message">Error occurred.</p>`);
       } else {
           // Login Existing Patient
           fetch(`/api/patients/login`, {
@@ -47,10 +47,10 @@ document.addEventListener("DOMContentLoaded", function () {
                   localStorage.setItem("patient_name", data.patient.name);
                   window.location.href = `/appointments?token=${data.patient.token}`;
               } else {
-                  messageDiv.innerHTML = `<p style="color: red;">${data.message}</p>`;
+                  messageDiv.innerHTML = `<p class="error-message">${data.message}</p>`;
               }
           })
-          .catch(() => messageDiv.innerHTML = `<p style="color: red;">Error occurred.</p>`);
+          .catch(() => messageDiv.innerHTML = `<p class="error-message">Error occurred.</p>`);
       }
   });
 });

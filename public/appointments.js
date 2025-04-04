@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const appointmentItem = document.createElement("div");
             appointmentItem.innerHTML = `
                 <div class="card">
-                    <p style="margin: 0 0 8px;">Appointment: <strong>${appoint.appointment_name}</strong> with Dr. ${appoint.doctor_name}</p>
-                    <p style="margin: 0 0 8px;">Date: ${new Date(appoint.start_time).toLocaleString()}</p>
+                    <p class="upcoming-appoint-desp">Appointment: <strong>${appoint.appointment_name}</strong> with Dr. ${appoint.doctor_name}</p>
+                    <p class="upcoming-appoint-desp">Date: ${new Date(appoint.start_time).toLocaleString()}</p>
                     <button class="cancel-button" 
                         onclick="deleteAppointment(${appoint.id})">Cancel</button>
                 </div>
@@ -261,4 +261,3 @@ const handleSignOut = () => {
     localStorage.removeItem('patient_id');
     window.location.href = '/patients'; // Redirect to login page
   };
-  
