@@ -7,10 +7,6 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\PatientAppointmentController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
 Route::post('/patients/login', [PatientController::class, 'login']);
 
 Route::get('/doctors', [DoctorController::class, 'index']);

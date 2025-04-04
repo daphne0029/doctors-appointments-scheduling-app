@@ -261,3 +261,4 @@ const handleSignOut = () => {
     localStorage.removeItem('patient_id');
     window.location.href = '/patients'; // Redirect to login page
   };
+  
