@@ -116,3 +116,13 @@
   font-size: 20px;
   margin-bottom: 20px;
 }
+
+.login-btn {
+  background-color: rgb(52, 165, 76);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}

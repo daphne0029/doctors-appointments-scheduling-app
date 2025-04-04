@@ -10,8 +10,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script> -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
-    <script src="/appointments.js"></script>
-    <link rel="stylesheet" href="/app.css">
+    <script src="/js/appointments.js"></script>
+    <link rel="stylesheet" href="/css/app.css">
 
 </head>
 <body>
