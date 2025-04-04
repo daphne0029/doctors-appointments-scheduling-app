@@ -57,9 +57,14 @@ class AppointmentService
      */
     private function getBookedAppointments(Collection $weekDates): Collection
     {
-        return Appointment::whereBetween('start_time', [$weekDates->first(), $weekDates->last()])
+        $startDate = $weekDates->first();
+        $endDate = Carbon::parse($weekDates->last())->endOfDay(); // Last day at 23:59:59
+        
+        $bookedAppointments = Appointment::whereBetween('start_time', [$startDate, $endDate])
             ->get()
             ->groupBy(fn($appt) => $appt->doctor_id . '-' . Carbon::parse($appt->start_time)->toDateString());
+
+        return $bookedAppointments;
     }
 
     /**

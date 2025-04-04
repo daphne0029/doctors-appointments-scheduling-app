@@ -42,5 +42,4 @@ class Appointment extends Model
 
         return false;
     }
-
 }
