@@ -2,8 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/appointments', function () {
-    return view('appointments');
+Route::middleware('web.auth')->group(function () {
+    Route::get('/appointments', function () {
+        return view('appointments');
+    });
 });
 
 Route::get('/patients', function () {

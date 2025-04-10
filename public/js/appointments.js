@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'listWeek',
         events: function(fetchInfo, successCallback, failureCallback) {
-            fetch('/api/appointments')  // Adjust this URL if needed
+            fetch('/api/appointments?patient_id=' + localStorage.getItem("patient_id"))  // Adjust this URL if needed
                 .then(response => response.json())
                 .then(data => {
                     let events = data.appointments.data.map(appointment => ({
@@ -161,7 +161,7 @@ let availableAppointments = {}; // Store available times fetched from API
 
 // Fetch available appointments and render them
 async function fetchAppointments() {
-    const response = await fetch("/api/available-appointments");
+    const response = await fetch("/api/available-appointments?patient_id=" + localStorage.getItem("patient_id"));
     availableAppointments = await response.json();
     renderTimeSlots();
     // $('div.appointment-times-group.new_patient').css('display', 'block');

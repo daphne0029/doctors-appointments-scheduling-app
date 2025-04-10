@@ -65,11 +65,7 @@ class PatientAppointmentController extends Controller
      */
     public function index(Request $request, $patientId)
     {
-        $token = $request->bearerToken();
-
-        if (!$token || !($patient = Patient::validateToken($patientId, $token))) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        $patient = $request->get('patient');
     
         $doctors = config('doctors');
         $types = config('appointment_types');
@@ -156,11 +152,7 @@ class PatientAppointmentController extends Controller
      */
     public function store(Request $request, $patientId)
     {
-        $token = $request->bearerToken();
-    
-        if (!$token || !($patient = Patient::validateToken($patientId, $token))) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        $patient = $request->get('patient');
 
         $appointmentTypes = array_keys(config('appointment_types'));
         $validator = Validator::make($request->all(),[
@@ -247,11 +239,7 @@ class PatientAppointmentController extends Controller
      */
     public function destroy(Request $request, $patientId, $appointmentId)
     {
-        $token = $request->bearerToken();
-
-        if (!$token || !($patient = Patient::validateToken($patientId, $token))) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        $patient = $request->get('patient');
 
         // Find the appointment
         $appointment = Appointment::where('id', $appointmentId)

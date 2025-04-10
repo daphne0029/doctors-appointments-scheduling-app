@@ -13,11 +13,17 @@ Route::get('/doctors', [DoctorController::class, 'index']);
 Route::get('/doctors/{id}', [DoctorController::class, 'show']);
 
 Route::post('/patients', [PatientController::class, 'store']);
-Route::get('/patients/{id}', [PatientController::class, 'show']);
+Route::get('/patients/{patientId}', [PatientController::class, 'show']);
 
-Route::get('/appointments', [AppointmentController::class, 'index']);
-Route::get('/available-appointments', [AppointmentController::class, 'availableAppointments']);
 
-Route::post('/patients/{id}/appointments', [PatientAppointmentController::class, 'store']);
-Route::get('/patients/{id}/appointments/upcomings', [PatientAppointmentController::class, 'index']);
-Route::delete('/patients/{id}/appointments/{appointmentId}', [PatientAppointmentController::class, 'destroy']);
+Route::middleware('auth')->group(function () {
+    Route::get('/appointments', [AppointmentController::class, 'index']);
+    Route::get('/available-appointments', [AppointmentController::class, 'availableAppointments']);
+});
+
+Route::middleware('auth.patient')->group(function () {
+    Route::post('/patients/{patientId}/appointments', [PatientAppointmentController::class, 'store']);
+    Route::get('/patients/{patientId}/appointments/upcomings', [PatientAppointmentController::class, 'index']);
+    Route::delete('/patients/{id}/appointments/{appointmentId}', [PatientAppointmentController::class, 'destroy']);
+});
+
