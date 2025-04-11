@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Doctor;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class DoctorController extends Controller
@@ -91,19 +92,83 @@ class DoctorController extends Controller
      *     )
      * )
      */
-    public function show($id)
+    public function show(Request $request, $doctorId)
     {
-        $doctor = Doctor::find($id);
+        $doctor = Doctor::find($doctorId);
 
         if (!$doctor) {
             return response()->json(['message' => 'Doctor not found'], 404);
         }
 
+        $schedules = [];
+        if (!empty($request->input('schedule'))) {
+            // request schedules
+        }
+
         return response()->json([
-            'id'        => $doctor->getId(),
-            'name'      => $doctor->getName(),
-            'email'     => $doctor->getEmail(),
-            'schedules' => $doctor->getSchedules(),
+            'id'        => $doctor->id,
+            'name'      => $doctor->name,
+            'email'     => $doctor->email,
+            'schedules' => $schedules,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'name'  => 'required|string|max:255',
+            'email' => 'required|string|email|unique:doctors,email',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $doctor = Doctor::create([
+            'name'  => $request->name,
+            'email' => $request->email,
+            'token' => substr(md5(openssl_random_pseudo_bytes(20)), 20),
+        ]);
+
+        return response()->json([
+            'message' => 'New doctor created successfully',
+            'doctor' => $doctor,
+        ], 201);
+    }
+
+    public function update(Request $request, $doctorId)
+    {
+        // Validate incoming data
+        $validator = Validator::make($request->all(), [
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:doctors,email,' . $doctorId,
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        // Find the doctor
+        $doctor = Doctor::find($doctorId);
+
+        if (!$doctor) {
+            return response()->json([
+                'message' => 'Doctor not found',
+            ], 404);
+        }
+
+        // Update the doctor's profile with the validated data
+        $doctor->update($request->only(['name', 'email']));
+
+        return response()->json([
+            'message' => 'Doctor profile updated successfully',
+            'doctor'  => $doctor,
         ]);
     }
 }

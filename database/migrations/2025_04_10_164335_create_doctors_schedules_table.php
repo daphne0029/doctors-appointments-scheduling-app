@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('appointments', function (Blueprint $table) {
+        Schema::create('doctors_schedules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('doctor_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->string('appointment_type');
+            $table->enum('day_of_week', ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->timestamps();
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('appointments');
+        Schema::dropIfExists('doctors_schedules');
     }
 };

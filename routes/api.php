@@ -10,7 +10,9 @@ use App\Http\Controllers\PatientAppointmentController;
 Route::post('/patients/login', [PatientController::class, 'login']);
 
 Route::get('/doctors', [DoctorController::class, 'index']);
-Route::get('/doctors/{id}', [DoctorController::class, 'show']);
+Route::post('/doctors', [DoctorController::class, 'store']);
+Route::patch('/doctors/{doctorId}', [DoctorController::class, 'update']);
+Route::get('/doctors/{doctorId}', [DoctorController::class, 'show']);
 
 Route::post('/patients', [PatientController::class, 'store']);
 Route::get('/patients/{patientId}', [PatientController::class, 'show']);
